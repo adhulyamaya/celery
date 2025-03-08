@@ -1,11 +1,11 @@
 # celery
-Celery & Task Scheduling in Django
+## Celery & Task Scheduling in Django  🚀
 
-Introduction
+## Introduction
 
 Celery is an asynchronous task queue that helps Django applications handle background tasks efficiently. It allows you to run long-running or scheduled tasks without blocking the main application.
 
-Why Use Celery?
+## Why Use Celery?
 
 ✅ Background Task Processing
 
@@ -19,7 +19,7 @@ Run scheduled tasks like database cleanup, backups, and notification reminders.
 
 Use django-celery-beat to manage periodic tasks from the Django Admin panel.
 
-Components
+## Components
 
 1. Celery
 
@@ -43,18 +43,21 @@ Enables Django Admin integration to create and manage periodic tasks.
 
 Stores task results in the database for monitoring and debugging.
 
-Installation
+## Installation
 
 Install the required dependencies:
 
+```bash
 pip install celery redis django-celery-beat django-celery-results
+```
 
-Configuration
+## Configuration
 
 1. Set Up Celery in Django
 
-Inside your Django project, create a celery.py file next to settings.py:
+ Inside Django project, create a celery.py file next to settings.py:
 
+```bash
 import os
 from celery import Celery
 
@@ -70,42 +73,50 @@ CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
+```
+
 2. Define a Celery Task
 
-Inside any Django app (your_app), create a tasks.py file:
+Inside  Django app  create a tasks.py file:
 
+```bash
 from celery import shared_task
 
 @shared_task
 def send_admin_notification(message):
     print(f'Admin Notification: {message}')
+```
 
 3. Running Celery Worker
 
 Start the Redis server:
-
+```bash
 redis-server
-
+```
 Run the Celery worker:
-
+```bash
 celery -A your_project worker --loglevel=info
 
 Scheduling Periodic Tasks (Using django-celery-beat)
+```
 
 1. Apply Migrations
-
+```bash
 python manage.py migrate django_celery_beat
+```
 
 2. Add Celery Beat to Installed Apps
-
+```bash
 INSTALLED_APPS = [
     ...
     'django_celery_beat',
 ]
-
+```
 3. Start Celery Beat Service
+```bash
 
 celery -A your_project beat --loglevel=info
+```
 
 4. Create a Periodic Task
 
@@ -115,6 +126,7 @@ Example: Notification Before Expiry Date
 
 Assume we have a Policy model with expiry_date. We need to notify admins 3 days before a policy expires.
 
+```bash
 tasks.py:
 
 from datetime import timedelta
@@ -128,25 +140,27 @@ def notify_admin_about_expiring_policies():
     expiring_policies = Policy.objects.filter(expiry_date__lte=three_days_from_now)
     for policy in expiring_policies:
         print(f'Policy {policy.name} is expiring soon!')
+```
 
 Schedule this task to run daily using django-celery-beat.
 
-Running Everything Together
+## Running Everything Together
 
 Start Redis:
-
+```bash
 redis-server
-
+```
 Run Celery Worker:
-
+```bash
 celery -A your_project worker --loglevel=info
-
+```
 Run Celery Beat:
-
+```bash
 celery -A your_project beat --loglevel=info
-
-Django Server (in another terminal):
-
+```
+Django Server :
+```bash
 python manage.py runserver
+```
 
-Now, Celery will run background tasks, and periodic tasks will execute based on your schedule. 🚀
+Now, Celery will run background tasks, and periodic tasks will execute based on schedule
